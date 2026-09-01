@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 厂商福利情报站 · 鸡蛋榜 / 套餐榜 / 模型榜</title>
+<meta name="description" content="汇总各家 AI 厂商的免费 token、积分福利、套餐价格与模型定价。谁在送、送多少、几号过期，一张页看全。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fbbf24' d='M12 2C8.5 2 5.5 7.5 5.5 13a6.5 6.5 0 0 0 13 0C18.5 7.5 15.5 2 12 2Z'/%3E%3C/svg%3E">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#070b14;
+    --panel:#0d1424;
+    --panel-2:#111a2e;
+    --border:#1d2a45;
+    --border-soft:#16213a;
+    --text:#e8eefb;
+    --muted:#8fa1c0;
+    --dim:#5d6f92;
+    --blue:#3b82f6;
+    --blue-soft:rgba(59,130,246,.14);
+    --amber:#fbbf24;
+    --amber-soft:rgba(251,191,36,.13);
+    --green:#34d399;
+    --green-soft:rgba(52,211,153,.13);
+    --red:#f87171;
+    --red-soft:rgba(248,113,113,.13);
+    --purple:#a78bfa;
+    --purple-soft:rgba(167,139,250,.14);
+    --mono:ui-monospace,'Cascadia Code','JetBrains Mono',Consolas,'Courier New',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Space Grotesk',-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(251,191,36,.3)}
+  a{color:inherit}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+
+  /* ---------- header ---------- */
+  header.site{
+    position:relative;
+    padding:64px 0 40px;
+    overflow:hidden;
+    background:
+      radial-gradient(600px 300px at 15% 0%, rgba(251,191,36,.09), transparent 70%),
+      radial-gradient(700px 340px at 85% 10%, rgba(59,130,246,.12), transparent 70%),
+      var(--bg);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .logo{
+    width:52px;height:52px;border-radius:14px;flex:none;
+    background:linear-gradient(135deg,#1a2540,#0d1424);
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 24px rgba(251,191,36,.15);
+  }
+  .logo svg{width:26px;height:26px}
+  .brand-name{font-size:15px;font-weight:600;letter-spacing:.08em;color:var(--muted)}
+  .brand-name b{color:var(--text)}
+  h1{
+    font-size:clamp(28px,5vw,44px);
+    font-weight:700;
+    letter-spacing:-.01em;
+    line-height:1.2;
+  }
+  h1 .hl{
+    background:linear-gradient(92deg,var(--amber),#f59e0b 45%,var(--blue));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .tagline{margin-top:10px;color:var(--muted);font-size:15px;max-width:640px}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:12.5px;color:var(--muted);
+    background:var(--panel);border:1px solid var(--border);
+    padding:5px 12px;border-radius:999px;
+  }
+  .chip svg{width:13px;height:13px;flex:none}
+  .chip .num{font-family:var(--mono);font-weight:600}
+  .chip.hot{color:var(--red);border-color:rgba(248,113,113,.35);background:var(--red-soft)}
+  .chip.egg{color:var(--amber);border-color:rgba(251,191,36,.35);background:var(--amber-soft)}
+  .chip.ok{color:var(--green);border-color:rgba(52,211,153,.35);background:var(--green-soft)}
+
+  /* ---------- alert strip ---------- */
+  .alert-strip{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+  .alert-strip:empty{display:none}
+  .alert-item{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;color:#fecaca;
+    background:var(--red-soft);border:1px solid rgba(248,113,113,.3);
+    padding:6px 12px;border-radius:10px;cursor:pointer;
+    transition:border-color .2s,background .2s;
+  }
+  .alert-item:hover{border-color:rgba(248,113,113,.6);background:rgba(248,113,113,.2)}
+  .alert-item svg{width:14px;height:14px;color:var(--red);flex:none}
+  .alert-item .d{font-family:var(--mono);font-weight:700;color:var(--red)}
+
+  /* ---------- sticky nav ---------- */
+  nav.sticky{
+    position:sticky;top:0;z-index:50;
+    background:rgba(7,11,20,.82);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  nav.sticky .wrap{display:flex;align-items:center;gap:4px;height:54px;overflow-x:auto;scrollbar-width:none}
+  nav.sticky .wrap::-webkit-scrollbar{display:none}
+  nav.sticky a.tab{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:7px 15px;border-radius:9px;
+    font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;
+    white-space:nowrap;transition:color .2s,background .2s;
+  }
+  nav.sticky a.tab svg{width:15px;height:15px}
+  nav.sticky a.tab:hover{color:var(--text);background:var(--panel-2)}
+  nav.sticky a.tab .cnt{font-family:var(--mono);font-size:11px;color:var(--dim)}
+  nav.sticky .spacer{flex:1;min-width:12px}
+  nav.sticky .upd{font-size:12px;color:var(--dim);white-space:nowrap}
+  nav.sticky .upd b{color:var(--muted);font-family:var(--mono);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:52px 0 8px;scroll-margin-top:70px}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .sec-title{display:flex;align-items:center;gap:12px}
+  .sec-ico{
+    width:40px;height:40px;border-radius:11px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--border);
+  }
+  .sec-ico svg{width:20px;height:20px}
+  .sec-ico.amber{background:var(--amber-soft);color:var(--amber)}
+  .sec-ico.blue{background:var(--blue-soft);color:var(--blue)}
+  .sec-ico.green{background:var(--green-soft);color:var(--green)}
+  h2{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  .sec-sub{font-size:13px;color:var(--muted);margin-top:2px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .seg{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px}
+  .seg button{
+    appearance:none;border:0;background:transparent;color:var(--muted);
+    font:inherit;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:6px;
+    cursor:pointer;transition:color .2s,background .2s;white-space:nowrap;
+  }
+  .seg button:hover{color:var(--text)}
+  .seg button.on{background:var(--panel-2);color:var(--text);box-shadow:inset 0 0 0 1px var(--border)}
+  .seg button:focus-visible,.fchip:focus-visible,th.sortable:focus-visible,a.tab:focus-visible,.alert-item:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .fchip{
+    appearance:none;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+    color:var(--muted);background:var(--panel);border:1px solid var(--border);
+    padding:6px 13px;border-radius:999px;transition:color .2s,border-color .2s,background .2s;
+  }
+  .fchip:hover{color:var(--text);border-color:var(--dim)}
+  .fchip.on{color:var(--amber);border-color:rgba(251,191,36,.45);background:var(--amber-soft)}
+  .switch{
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;
+    font-size:12.5px;color:var(--muted);font-weight:600;
+  }
+  .switch input{position:absolute;opacity:0;pointer-events:none}
+  .switch .track{
+    width:32px;height:18px;border-radius:999px;background:var(--panel-2);
+    border:1px solid var(--border);position:relative;transition:background .2s;
+  }
+  .switch .track::after{
+    content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;
+    background:var(--dim);transition:transform .2s,background .2s;
+  }
+  .switch input:checked + .track{background:var(--blue-soft);border-color:rgba(59,130,246,.5)}
+  .switch input:checked + .track::after{transform:translateX(14px);background:var(--blue)}
+  .switch input:focus-visible + .track{outline:2px solid var(--blue);outline-offset:2px}
+
+  /* ---------- board card ---------- */
+  .board{
+    margin-top:18px;background:var(--panel);
+    border:1px solid var(--border);border-radius:16px;overflow:hidden;
+  }
+  .board-note{
+    display:flex;gap:8px;align-items:flex-start;
+    padding:12px 18px;font-size:12.5px;color:var(--dim);
+    background:rgba(59,130,246,.05);border-bottom:1px solid var(--border-soft);
+  }
+  .board-note svg{width:14px;height:14px;flex:none;margin-top:2px;color:var(--blue)}
+
+  /* ---------- eggs rows ---------- */
+  .egg-row{
+    display:grid;
+    grid-template-columns:56px minmax(180px,1.35fr) 1.6fr 130px 150px;
+    gap:16px;align-items:center;
+    padding:16px 18px;
+    border-bottom:1px solid var(--border-soft);
+    transition:background .2s;
+    position:relative;
+  }
+  .egg-row:last-child{border-bottom:0}
+  .egg-row:hover{background:rgba(255,255,255,.02)}
+  .egg-row.expired{opacity:.42}
+  .egg-row.expired .egg-visual svg{filter:grayscale(1)}
+  .egg-visual{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .egg-visual svg{width:30px;height:30px;color:var(--amber);transition:transform .2s}
+  .egg-row:hover .egg-visual svg{transform:translateY(-2px)}
+  .egg-visual .size{font-size:10.5px;color:var(--dim);white-space:nowrap}
+  .egg-main .v{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .vendor{
+    font-weight:700;font-size:15px;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .vd{width:22px;height:22px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono)}
+  .egg-main .t{font-size:13.5px;color:var(--text);margin-top:2px;font-weight:600}
+  .egg-desc{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .amount{
+    font-family:var(--mono);font-size:19px;font-weight:700;color:var(--amber);
+    display:inline-flex;align-items:baseline;gap:3px;
+  }
+  .amount small{font-size:11.5px;color:var(--muted);font-weight:500;font-family:inherit}
+  .tagline2{font-size:11.5px;color:var(--dim);margin-top:2px}
+  .tag{
+    display:inline-flex;align-items:center;font-size:11px;font-weight:600;
+    padding:2.5px 9px;border-radius:999px;border:1px solid;
+  }
+  .tag.signup{color:#93c5fd;border-color:rgba(147,197,253,.35);background:rgba(147,197,253,.09)}
+  .tag.daily{color:var(--purple);border-color:rgba(167,139,250,.35);background:var(--purple-soft)}
+  .tag.limited{color:#fca5a5;border-color:rgba(252,165,165,.35);background:rgba(252,165,165,.09)}
+  .tag.forever{color:var(--green);border-color:rgba(52,211,153,.35);background:var(--green-soft)}
+  .tag.auto{color:var(--amber);border-style:dashed;border-color:rgba(251,191,36,.5);background:transparent}
+  .deadline .d1{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .dday{
+    display:inline-flex;align-items:center;gap:5px;margin-top:4px;
+    font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:7px;
+    font-family:var(--mono);
+  }
+  .dday svg{width:11px;height:11px}
+  .dday.long{color:var(--green);background:var(--green-soft)}
+  .dday.safe{color:#93c5fd;background:rgba(147,197,253,.09)}
+  .dday.warn{color:var(--amber);background:var(--amber-soft)}
+  .dday.danger{color:var(--red);background:var(--red-soft)}
+  .dday.over{color:var(--dim);background:rgba(93,111,146,.12)}
+  .go{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12.5px;font-weight:700;text-decoration:none;
+    color:var(--text);background:var(--panel-2);
+    border:1px solid var(--border);padding:8px 14px;border-radius:9px;
+    transition:border-color .2s,color .2s,background .2s;cursor:pointer;white-space:nowrap;
+  }
+  .go svg{width:13px;height:13px;color:var(--dim);transition:color .2s}
+  .go:hover{border-color:var(--amber);color:var(--amber)}
+  .go:hover svg{color:var(--amber)}
+
+  /* ---------- tables ---------- */
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:720px}
+  thead th{
+    text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.05em;
+    color:var(--dim);text-transform:uppercase;
+    padding:12px 16px;border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,.015);white-space:nowrap;
+  }
+  th.sortable{cursor:pointer;user-select:none;transition:color .2s}
+  th.sortable:hover{color:var(--text)}
+  th.sortable .arr{display:inline-block;width:10px;color:var(--blue);font-family:var(--mono)}
+  tbody td{padding:14px 16px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr{transition:background .2s}
+  tbody tr:hover{background:rgba(255,255,255,.02)}
+  tbody tr.pinned{background:var(--amber-soft)}
+  tbody tr.pinned:hover{background:rgba(251,191,36,.18)}
+  tbody tr.ref td{opacity:.62}
+  .plan-name{font-weight:700;font-size:14px}
+  .plan-sub{font-size:12px;color:var(--dim);margin-top:1px}
+  .price{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--text);white-space:nowrap}
+  .price small{font-size:11px;color:var(--dim);font-weight:500}
+  .price .cut{font-size:11.5px;color:var(--green);margin-left:6px;font-family:inherit;font-weight:600}
+  .pill{
+    display:inline-flex;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;
+    border:1px solid;white-space:nowrap;
+  }
+  .pill.best{color:var(--green);border-color:rgba(52,211,153,.4);background:var(--green-soft)}
+  .pill.pop{color:var(--amber);border-color:rgba(251,191,36,.4);background:var(--amber-soft)}
+  .pill.ref{color:var(--dim);border-color:var(--border)}
+  .cell-muted{color:var(--muted);font-size:12.5px}
+  .mono{font-family:var(--mono)}
+  .model-name{font-weight:700;font-family:var(--mono);font-size:13.5px}
+  .free-yes{color:var(--green);font-weight:600;font-size:12.5px}
+  .free-no{color:var(--dim);font-size:12.5px}
+
+  .empty{padding:36px 18px;text-align:center;color:var(--dim);font-size:13.5px}
+
+  /* ---------- footer ---------- */
+  footer.site{
+    margin-top:64px;padding:36px 0 48px;
+    border-top:1px solid var(--border-soft);
+    background:linear-gradient(180deg,transparent,rgba(59,130,246,.03));
+  }
+  footer.site h3{font-size:14px;margin-bottom:8px;color:var(--text)}
+  footer.site p{font-size:12.5px;color:var(--dim);max-width:760px}
+  footer.site p + p{margin-top:6px}
+  footer.site a{color:var(--muted)}
+  footer.site a:hover{color:var(--blue)}
+  .foot-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  code.k{
+    font-family:var(--mono);font-size:11.5px;color:var(--amber);
+    background:var(--amber-soft);padding:1px 6px;border-radius:5px;
+  }
+
+  @media (max-width:960px){
+    .egg-row{grid-template-columns:44px 1fr 110px;grid-template-areas:"v m a" "v m d" "v m g";row-gap:10px}
+    .egg-visual{grid-area:v}
+    .egg-main{grid-area:m}
+    .egg-amount{grid-area:a}
+    .deadline{grid-area:d}
+    .egg-go{grid-area:g}
+  }
+  @media (max-width:640px){
+    header.site{padding:44px 0 30px}
+    section{padding:40px 0 4px}
+    .egg-row{grid-template-columns:44px 1fr;grid-template-areas:"v m" "a a" "d d" "g g"}
+    .foot-grid{grid-template-columns:1fr}
+    .sec-head{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= HEADER ======================= -->
+<header class="site">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5C8.7 2.5 5.8 8 5.8 13.2a6.2 6.2 0 0 0 12.4 0C18.2 8 15.3 2.5 12 2.5Z" fill="#fbbf24" opacity=".9"/><path d="M9.4 9.5c-.6 1-1 2.3-1 3.7" stroke="#0d1424" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-name">AI WELFARE RADAR · <b>情报站</b></div>
+    </div>
+    <h1>AI 厂商福利<span class="hl">情报站</span></h1>
+    <p class="tagline">各家天天送 token、送积分，消息太散、等刷到推送活动早过期了。这里把羊毛集中薅：<b style="color:var(--amber)">鸡蛋榜</b>看谁在送、送多少、几号过期；<b style="color:#93c5fd">套餐榜</b>比订阅价格；<b style="color:var(--green)">模型榜</b>查按量单价。</p>
+    <div class="meta-row" id="statsRow"></div>
+    <div class="alert-strip" id="alertStrip" aria-label="临期预警"></div>
+  </div>
+</header>
+
+<!-- ======================= NAV ======================= -->
+<nav class="sticky" aria-label="榜单导航">
+  <div class="wrap">
+    <a class="tab" href="#eggs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.5C8.7 2.5 5.8 8 5.8 13.2a6.2 6.2 0 0 0 12.4 0C18.2 8 15.3 2.5 12 2.5Z"/></svg>
+      鸡蛋榜 <span class="cnt" id="navEggCnt"></span>
+    </a>
+    <a class="tab" href="#plans">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M8 15h4"/></svg>
+      套餐榜 <span class="cnt" id="navPlanCnt"></span>
+    </a>
+    <a class="tab" href="#models">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9zM12 1.5V4M12 20v2.5M1.5 12H4M20 12h2.5"/></svg>
+      模型榜 <span class="cnt" id="navModelCnt"></span>
+    </a>
+    <span class="spacer"></span>
+    <span class="upd">数据更新于 <b id="navUpdated"></b></span>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ======================= 鸡蛋榜 ======================= -->
+  <section id="eggs" aria-labelledby="eggsTitle">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">
+          <div class="sec-ico amber" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.5C8.7 2.5 5.8 8 5.8 13.2a6.2 6.2 0 0 0 12.4 0C18.2 8 15.3 2.5 12 2.5Z"/><path d="M6.5 15.5c2.5 1.6 8.5 1.6 11 0" opacity=".5"/></svg>
+          </div>
+          <div>
+            <h2 id="eggsTitle">鸡蛋榜 <span style="font-size:12px;font-weight:500;color:var(--dim)">/ 谁在送 · 送多少 · 几号过期</span></h2>
+            <div class="sec-sub">各家正在发放的免费 token / 积分 / 代金券，按临期程度管理，过期自动置灰</div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="排序方式">
+          <button type="button" id="eggSortTime" class="on">按剩余时间</button>
+          <button type="button" id="eggSortValue">按蛋的大小</button>
+        </div>
+        <div class="seg" role="group" aria-label="福利类型筛选" id="eggFilters"></div>
+        <label class="switch"><input type="checkbox" id="hideExpired" checked><span class="track"></span>隐藏已过期</label>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="board-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+        <span>「蛋的大小」按 token 当量分档：鸵鸟蛋 ≥ 2000 万 · 大蛋 ≥ 500 万 · 中蛋 ≥ 100 万 · 小蛋 &lt; 100 万。「每日领取」类长期更香，别只盯着一次性大蛋。</span>
+      </div>
+      <div id="eggList"></div>
+    </div>
+  </section>
+
+  <!-- ======================= 套餐榜 ======================= -->
+  <section id="plans" aria-labelledby="plansTitle">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">
+          <div class="sec-ico blue" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M8 15h4"/></svg>
+          </div>
+          <div>
+            <h2 id="plansTitle">套餐榜 <span style="font-size:12px;font-weight:500;color:var(--dim)">/ 编程订阅 &amp; 会员横评</span></h2>
+            <div class="sec-sub">按月价从低到高排列，国际大厂套餐放在最后当参考锚点</div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="套餐筛选" id="planFilters">
+          <button type="button" data-r="all" class="on">全部</button>
+          <button type="button" data-r="cn">国产</button>
+          <button type="button" data-r="intl">国际参考</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="board-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+        <span>「5 小时窗口」指订阅制编程套餐常见的滚动限流周期，窗口内调用次数用完需等待刷新；各家政策经常调整，下单前以官网为准。</span>
+      </div>
+      <div class="tbl-wrap">
+        <table aria-label="套餐价格对比">
+          <thead>
+            <tr>
+              <th>厂商 / 套餐</th>
+              <th class="sortable" data-key="price">月价 <span class="arr"></span></th>
+              <th>模型 / 额度</th>
+              <th>适用工具</th>
+              <th>亮点</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="planBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 模型榜 ======================= -->
+  <section id="models" aria-labelledby="modelsTitle">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">
+          <div class="sec-ico green" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9zM12 1.5V4M12 20v2.5M1.5 12H4M20 12h2.5"/></svg>
+          </div>
+          <div>
+            <h2 id="modelsTitle">模型榜 <span style="font-size:12px;font-weight:500;color:var(--dim)">/ API 按量单价速查</span></h2>
+            <div class="sec-sub">统一折算为「元 / 百万 tokens」，点表头可按上下文、输入价、输出价排序</div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="模型筛选" id="modelFilters">
+          <button type="button" data-r="all" class="on">全部</button>
+          <button type="button" data-r="cn">国产</button>
+          <button type="button" data-r="intl">国际</button>
+        </div>
+        <label class="switch"><input type="checkbox" id="onlyFree"><span class="track"></span>只看有免费额度</label>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="tbl-wrap">
+        <table aria-label="模型按量价格对比">
+          <thead>
+            <tr>
+              <th>模型 / 厂商</th>
+              <th class="sortable" data-key="ctx">上下文 <span class="arr"></span></th>
+              <th class="sortable" data-key="pin">输入价 <span class="arr"></span></th>
+              <th class="sortable" data-key="pout">输出价 <span class="arr"></span></th>
+              <th>免费姿势</th>
+              <th>一句话点评</th>
+            </tr>
+          </thead>
+          <tbody id="modelBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ======================= FOOTER ======================= -->
+<footer class="site">
+  <div class="wrap foot-grid">
+    <div>
+      <h3>怎么维护这份数据？</h3>
+      <p>本页为纯静态站点。日常更新只需改 <code class="k">data.js</code>（鸡蛋榜 <code class="k">eggs</code>、套餐榜 <code class="k">plans</code>、模型榜 <code class="k">models</code>），保存刷新即可；改完记得更新 <code class="k">updatedAt</code>。倒计时、临期预警、过期置灰由浏览器根据 <code class="k">end</code> 日期自动计算。</p>
+      <p>更省事的方式：运行 <code class="k">node scripts/update-data.mjs --apply</code>，脚本会巡检各厂商公告页、检查现有链接是否失效、把高置信度的新活动自动写回 <code class="k">data.js</code>（带「自动收录」标记待复核），并在 <code class="k">reports/</code> 生成当日巡检报告。部署到 GitHub 后，仓库自带的 Actions 会每天定时跑一遍并自动发布。</p>
+    </div>
+    <div>
+      <h3>免责声明</h3>
+      <p>页面中价格与活动额度为 <span id="footUpdated"></span> 采集的样例数据，仅作演示与信息聚合参考；各家活动规则、定价调整频繁，实际以各厂商官网为准。本站与所列厂商无利益关系，领福利请自行判断活动真实性，谨防钓鱼链接。</p>
+      <p>行情参考：<a href="https://cloud.tencent.com/developer/article/2626756" target="_blank" rel="noopener">2026 大模型 API 免费额度汇总</a> · <a href="https://codingplan.org/en" target="_blank" rel="noopener">CodingPlan.org</a> · <a href="https://www.mindstudio.ai/blog/open-model-coding-plans-glm-kimi-deepseek" target="_blank" rel="noopener">GLM vs Kimi vs DeepSeek</a></p>
+    </div>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+/* ================================================================
+ *  渲染逻辑：所有数据都在 data.js 里，日常更新不需要改这个文件
+ * ================================================================ */
+(function(){
+  const $ = s => document.querySelector(s);
+  const DAY = 86400000;
+  const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+
+  const fmtDate = s => { const [y,m,d] = s.split('-'); return `${m}.${d}`; };
+  const daysLeft = e => e ? Math.ceil((new Date(e + 'T00:00:00') - TODAY) / DAY) : Infinity;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  const TYPE = {
+    signup:  {label:'注册礼',   cls:'signup'},
+    daily:   {label:'每日领取', cls:'daily'},
+    limited: {label:'限时活动', cls:'limited'},
+    forever: {label:'永久免费', cls:'forever'}
+  };
+  const EGG_SIZE = [
+    [2000, '鸵鸟蛋', 40], [500, '大蛋', 32], [100, '中蛋', 26], [-Infinity, '小蛋', 21]
+  ];
+  const eggSize = v => EGG_SIZE.find(s => v >= s[0]);
+
+  const svg = {
+    clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M9 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/></svg>',
+    egg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5C8.7 2.5 5.8 8 5.8 13.2a6.2 6.2 0 0 0 12.4 0C18.2 8 15.3 2.5 12 2.5Z"/></svg>',
+    cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
+  };
+
+  /* ---------- header stats ---------- */
+  const eggsAll = DATA.eggs;
+  const left = e => daysLeft(e.end) >= 0;
+  const active = eggsAll.filter(left).length;
+  const soon = eggsAll.filter(e => { const d = daysLeft(e.end); return d >= 0 && d <= 3; }).length;
+  const foreverCnt = eggsAll.filter(e => e.forever).length;
+  $('#statsRow').innerHTML = `
+    <span class="chip egg">${svg.egg} 活动进行中 <span class="num">${active}</span> 个</span>
+    <span class="chip ok">${svg.clock} 长期羊毛 <span class="num">${foreverCnt}</span> 个</span>
+    ${soon ? `<span class="chip hot">${svg.cal} <span class="num">${soon}</span> 个 3 天内截止</span>` : ''}
+    <span class="chip">共收录 ${eggsAll.length} 条福利情报</span>`;
+  $('#navUpdated').textContent = DATA.updatedAt + (DATA.checkedAt ? ` · 巡检 ${DATA.checkedAt}` : '');
+  $('#footUpdated').textContent = DATA.updatedAt;
+  $('#navEggCnt').textContent = eggsAll.length;
+  $('#navPlanCnt').textContent = DATA.plans.length;
+  $('#navModelCnt').textContent = DATA.models.length;
+
+  /* ---------- 临期预警 ---------- */
+  $('#alertStrip').innerHTML = eggsAll
+    .filter(e => { const d = daysLeft(e.end); return d >= 0 && d <= 3; })
+    .map(e => {
+      const d = daysLeft(e.end);
+      const t = d === 0 ? '今天截止' : d === 1 ? '明天截止' : `剩 ${d} 天`;
+      return `<a class="alert-item" href="#eggs">${svg.clock} ${esc(e.vendor)}「${esc(e.title)}」<span class="d">${t}</span></a>`;
+    }).join('');
+
+  /* ---------- 鸡蛋榜 ---------- */
+  let eggSort = 'time', eggFilter = 'all', hideExpired = true;
+
+  const FILTERS = [['all','全部'],['signup','注册礼'],['daily','每日'],['limited','限时'],['forever','永久免费']];
+  $('#eggFilters').innerHTML = FILTERS.map(([k,l]) =>
+    `<button type="button" data-f="${k}" class="${k==='all'?'on':''}">${l}</button>`).join('');
+
+  function ddayHTML(e){
+    if (e.forever) return `<span class="dday long">${svg.clock} 长期有效</span>`;
+    const d = daysLeft(e.end);
+    const cls = d < 0 ? 'over' : d <= 3 ? 'danger' : d <= 7 ? 'warn' : d <= 30 ? 'safe' : 'long';
+    const txt = d < 0 ? '已过期' : d === 0 ? '今天截止' : `剩 ${d} 天`;
+    return `<span class="dday ${cls}">${svg.clock} ${txt}</span>`;
+  }
+
+  function renderEggs(){
+    let list = eggsAll.filter(e => eggFilter === 'all' || e.type === eggFilter);
+    if (hideExpired) list = list.filter(left);
+    list.sort((a,b) => {
+      if (eggSort === 'value') return b.value - a.value;
+      return daysLeft(a.end) - daysLeft(b.end);
+    });
+    $('#eggList').innerHTML = list.length ? list.map(e => {
+      const [ , label, px ] = eggSize(e.value);
+      const d = daysLeft(e.end);
+      const expired = !e.forever && d < 0;
+      const vd = esc(e.vendor).trim();
+      const initial = [...vd].filter(ch => /[a-zA-Z0-9]/.test(ch))[0] || vd[0];
+      return `
+      <div class="egg-row${expired ? ' expired' : ''}">
+        <div class="egg-visual" title="${label} · ${e.value} 万 token 当量">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:${px}px;height:${px}px">${svg.egg.match(/<path.*\/>/)[0]}</svg>
+          <span class="size">${label}</span>
+        </div>
+        <div class="egg-main">
+          <div class="v">
+            <span class="vendor"><span class="vd" style="background:${esc(e.color)}22;color:${esc(e.color)}">${esc(initial.toUpperCase())}</span>${esc(e.vendor)}</span>
+            <span class="tag ${TYPE[e.type].cls}">${TYPE[e.type].label}</span>
+            ${e.auto ? '<span class="tag auto" title="由每日巡检脚本自动收录，建议人工复核">自动收录</span>' : ''}
+          </div>
+          <div class="t">${esc(e.title)}</div>
+          <div class="egg-desc">${esc(e.desc)}</div>
+        </div>
+        <div class="egg-amount">
+          <span class="amount">${esc(e.amount)}<small> ${esc(e.unit)}</small></span>
+          <div class="tagline2">token 当量 ${e.value} 万</div>
+        </div>
+        <div class="deadline">
+          <div class="d1">${e.forever ? '无截止日期' : esc(e.end) + ' 截止'}</div>
+          ${ddayHTML(e)}
+        </div>
+        <div class="egg-go">
+          <a class="go" href="${esc(e.url)}" target="_blank" rel="noopener">去领取 ${svg.ext}</a>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty">没有符合条件的福利，换个筛选项试试</div>`;
+  }
+  $('#eggSortTime').addEventListener('click', () => { eggSort='time'; toggleBtn('#eggSortTime','#eggSortValue'); renderEggs(); });
+  $('#eggSortValue').addEventListener('click', () => { eggSort='value'; toggleBtn('#eggSortValue','#eggSortTime'); renderEggs(); });
+  function toggleBtn(onSel, offSel){ $(onSel).classList.add('on'); $(offSel).classList.remove('on'); }
+  $('#eggFilters').addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b) return;
+    eggFilter = b.dataset.f;
+    $('#eggFilters').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    renderEggs();
+  });
+  $('#hideExpired').addEventListener('change', ev => { hideExpired = ev.target.checked; renderEggs(); });
+
+  /* ---------- 套餐榜 ---------- */
+  let planRegion = 'all';
+  function renderPlans(){
+    const list = DATA.plans
+      .filter(p => planRegion === 'all' || p.region === planRegion)
+      .sort((a,b) => a.price - b.price);
+    const tagHTML = t => t === 'best' ? '<span class="pill best">性价比</span>'
+                      : t === 'pop'  ? '<span class="pill pop">人气</span>'
+                      : t === 'ref'  ? '<span class="pill ref">参考</span>' : '';
+    $('#planBody').innerHTML = list.map(p => `
+      <tr class="${p.region === 'intl' ? 'ref' : ''}${p.tag === 'best' ? ' pinned' : ''}">
+        <td>
+          <div class="plan-name">${esc(p.vendor)} · ${esc(p.plan)}</div>
+          <div class="plan-sub">${esc(p.note || (p.region === 'intl' ? '国际参考' : '国产套餐'))}</div>
+        </td>
+        <td><span class="price">${esc(p.priceText)}<small>/月起</small></span>${p.cut ? `<span class="cut">${esc(p.cut)}</span>` : ''}</td>
+        <td class="cell-muted"><b style="color:var(--text)">${esc(p.model)}</b><br>${esc(p.quota)}</td>
+        <td class="cell-muted">${esc(p.tools)}</td>
+        <td>${tagHTML(p.tag)}</td>
+        <td><a class="go" href="${esc(p.url)}" target="_blank" rel="noopener">官网 ${svg.ext}</a></td>
+      </tr>`).join('');
+  }
+  $('#planFilters').addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b) return;
+    planRegion = b.dataset.r;
+    $('#planFilters').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    renderPlans();
+  });
+
+  /* ---------- 模型榜 ---------- */
+  let modelRegion = 'all', onlyFree = false, modelSort = { key:'pout', asc:true };
+  function renderModels(){
+    let list = DATA.models
+      .filter(m => modelRegion === 'all' || m.region === modelRegion)
+      .filter(m => !onlyFree || /免费|体验金|代金券|100 万/.test(m.free));
+    list.sort((a,b) => (a[modelSort.key] - b[modelSort.key]) * (modelSort.asc ? 1 : -1));
+    document.querySelectorAll('#models th.sortable').forEach(th => {
+      th.querySelector('.arr').textContent = th.dataset.key === modelSort.key ? (modelSort.asc ? '↑' : '↓') : '';
+    });
+    $('#modelBody').innerHTML = list.map(m => `
+      <tr>
+        <td>
+          <div class="model-name">${esc(m.name)}</div>
+          <div class="plan-sub">${esc(m.vendor)}${m.region === 'intl' ? ' · 国际' : ''}</div>
+        </td>
+        <td class="mono">${m.ctx >= 1000 ? '1M' : m.ctx + 'K'}</td>
+        <td class="mono">¥${m.pin}<small style="color:var(--dim)"> /M</small></td>
+        <td class="mono" style="font-weight:700">¥${m.pout}<small style="color:var(--dim)"> /M</small></td>
+        <td class="${/免费|体验金|代金券/.test(m.free) ? 'free-yes' : 'free-no'}">${esc(m.free)}</td>
+        <td class="cell-muted">${esc(m.comment)} <a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--dim);text-decoration:none;white-space:nowrap">↗</a></td>
+      </tr>`).join('');
+  }
+  document.querySelectorAll('#models th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const k = th.dataset.key;
+      if (modelSort.key === k) modelSort.asc = !modelSort.asc;
+      else modelSort = { key:k, asc:true };
+      renderModels();
+    });
+  });
+  $('#modelFilters').addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b) return;
+    modelRegion = b.dataset.r;
+    $('#modelFilters').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    renderModels();
+  });
+  $('#onlyFree').addEventListener('change', ev => { onlyFree = ev.target.checked; renderModels(); });
+
+  renderEggs();
+  renderPlans();
+  renderModels();
+})();
+</script>
+</body>
+</html>
