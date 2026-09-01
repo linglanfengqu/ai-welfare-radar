@@ -2,7 +2,7 @@ name: daily update & deploy
 
 on:
   schedule:
-    - cron: '17 1 * * *'   # UTC 01:17 = 北京时间 09:17，每天一次
+    - cron: '17 1,13 * * *'   # UTC 01:17 / 13:17 = 北京时间 09:17 / 21:17，每天两次
   workflow_dispatch:        # 允许在 Actions 页面手动触发
   push:
     branches: [main]

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 厂商福利情报站 · 鸡蛋榜 / 套餐榜 / 模型榜</title>
+<title>AI 厂商福利情报站 · 鸡蛋榜 / 免费榜 / 套餐榜 / 模型榜</title>
 <meta name="description" content="汇总各家 AI 厂商的免费 token、积分福利、套餐价格与模型定价。谁在送、送多少、几号过期，一张页看全。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fbbf24' d='M12 2C8.5 2 5.5 7.5 5.5 13a6.5 6.5 0 0 0 13 0C18.5 7.5 15.5 2 12 2Z'/%3E%3C/svg%3E">
 <style>
@@ -253,6 +253,10 @@
   .go svg{width:13px;height:13px;color:var(--dim);transition:color .2s}
   .go:hover{border-color:var(--amber);color:var(--amber)}
   .go:hover svg{color:var(--amber)}
+  .addr{font-family:var(--mono);font-size:11px;color:var(--dim);text-decoration:none;border-bottom:1px dashed var(--border);transition:color .2s,border-color .2s;word-break:break-all}
+  .addr:hover{color:var(--blue);border-color:var(--blue)}
+  .egg-go{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .site-cell{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 
   /* ---------- tables ---------- */
   .tbl-wrap{overflow-x:auto}
@@ -285,6 +289,14 @@
   .pill.best{color:var(--green);border-color:rgba(52,211,153,.4);background:var(--green-soft)}
   .pill.pop{color:var(--amber);border-color:rgba(251,191,36,.4);background:var(--amber-soft)}
   .pill.ref{color:var(--dim);border-color:var(--border)}
+  .sec-ico.purple{background:var(--purple-soft);color:var(--purple)}
+  .pill.api{color:#93c5fd;border-color:rgba(147,197,253,.35);background:rgba(147,197,253,.09)}
+  .pill.web{color:var(--purple);border-color:rgba(167,139,250,.35);background:var(--purple-soft)}
+  .pill.code{color:var(--amber);border-color:rgba(251,191,36,.35);background:var(--amber-soft)}
+  .card-no{color:var(--green);font-weight:700;font-size:12.5px}
+  .card-alt{color:var(--amber);font-weight:600;font-size:12.5px}
+  .card-yes{color:var(--red);font-weight:700;font-size:12.5px}
+  tr.promo-expired td{opacity:.42}
   .cell-muted{color:var(--muted);font-size:12.5px}
   .mono{font-family:var(--mono)}
   .model-name{font-weight:700;font-family:var(--mono);font-size:13.5px}
@@ -339,7 +351,7 @@
       <div class="brand-name">AI WELFARE RADAR · <b>情报站</b></div>
     </div>
     <h1>AI 厂商福利<span class="hl">情报站</span></h1>
-    <p class="tagline">各家天天送 token、送积分，消息太散、等刷到推送活动早过期了。这里把羊毛集中薅：<b style="color:var(--amber)">鸡蛋榜</b>看谁在送、送多少、几号过期；<b style="color:#93c5fd">套餐榜</b>比订阅价格；<b style="color:var(--green)">模型榜</b>查按量单价。</p>
+    <p class="tagline">各家天天送 token、送积分，消息太散、等刷到推送活动早过期了。这里把羊毛集中薅：<b style="color:var(--amber)">鸡蛋榜</b>看谁在送、送多少、几号过期；<b style="color:var(--purple)">免费榜</b>盘点真·免费的版本和额度；<b style="color:#93c5fd">套餐榜</b>比订阅价格；<b style="color:var(--green)">模型榜</b>查按量单价。</p>
     <div class="meta-row" id="statsRow"></div>
     <div class="alert-strip" id="alertStrip" aria-label="临期预警"></div>
   </div>
@@ -351,6 +363,10 @@
     <a class="tab" href="#eggs">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.5C8.7 2.5 5.8 8 5.8 13.2a6.2 6.2 0 0 0 12.4 0C18.2 8 15.3 2.5 12 2.5Z"/></svg>
       鸡蛋榜 <span class="cnt" id="navEggCnt"></span>
+    </a>
+    <a class="tab" href="#free">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8M12 8v13M12 8a3 3 0 1 0-3-3c0 2.2 3 3 3 3Zm0 0a3 3 0 1 1 3-3c0 2.2-3 3-3 3Z"/></svg>
+      免费榜 <span class="cnt" id="navFreeCnt"></span>
     </a>
     <a class="tab" href="#plans">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M8 15h4"/></svg>
@@ -397,6 +413,62 @@
         <span>「蛋的大小」按 token 当量分档：鸵鸟蛋 ≥ 2000 万 · 大蛋 ≥ 500 万 · 中蛋 ≥ 100 万 · 小蛋 &lt; 100 万。「每日领取」类长期更香，别只盯着一次性大蛋。</span>
       </div>
       <div id="eggList"></div>
+    </div>
+  </section>
+
+  <!-- ======================= 免费榜 ======================= -->
+  <section id="free" aria-labelledby="freeTitle">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">
+          <div class="sec-ico purple" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8M12 8v13M12 8a3 3 0 1 0-3-3c0 2.2 3 3 3 3Zm0 0a3 3 0 1 1 3-3c0 2.2-3 3-3 3Z"/></svg>
+          </div>
+          <div>
+            <h2 id="freeTitle">免费榜 <span style="font-size:12px;font-weight:500;color:var(--dim)">/ 真·免费版 · 永久白嫖区</span></h2>
+            <div class="sec-sub">永久免费版 + 限时免费活动都在这：API 免费层、网页版、编程工具；活动类条目自动倒计时，过期置灰</div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="免费类别筛选" id="freeCatFilters">
+          <button type="button" data-c="all" class="on">全部</button>
+          <button type="button" data-c="api">API 免费层</button>
+          <button type="button" data-c="web">网页版</button>
+          <button type="button" data-c="code">编程工具</button>
+          <button type="button" data-c="promo">活动免费</button>
+        </div>
+        <div class="seg" role="group" aria-label="地区筛选" id="freeRegionFilters">
+          <button type="button" data-r="all" class="on">全部</button>
+          <button type="button" data-r="cn">国产</button>
+          <button type="button" data-r="intl">国际</button>
+        </div>
+        <label class="switch"><input type="checkbox" id="onlyNoCard" checked><span class="track"></span>只看不绑卡</label>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="board-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+        <span>「绑卡」是薅国际羊毛最大的坑：不少平台宣称免费却要求先绑信用卡，本榜默认只收不用绑卡的（可关掉开关看全部）。「活动免费」类是限时开放的免费版本，到点自动置灰——白嫖要趁早；免费层限额政策各家随时调整，重度使用前以官方定价页为准。</span>
+      </div>
+      <div class="tbl-wrap">
+        <table aria-label="免费版对比">
+          <thead>
+            <tr>
+              <th>产品 / 厂商</th>
+              <th>类别</th>
+              <th>期限</th>
+              <th>免费内容</th>
+              <th>主要限制</th>
+              <th>绑卡</th>
+              <th>一句话点评</th>
+              <th>地址</th>
+            </tr>
+          </thead>
+          <tbody id="freeBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -481,6 +553,7 @@
               <th class="sortable" data-key="pout">输出价 <span class="arr"></span></th>
               <th>免费姿势</th>
               <th>一句话点评</th>
+              <th>地址</th>
             </tr>
           </thead>
           <tbody id="modelBody"></tbody>
@@ -495,7 +568,7 @@
   <div class="wrap foot-grid">
     <div>
       <h3>怎么维护这份数据？</h3>
-      <p>本页为纯静态站点。日常更新只需改 <code class="k">data.js</code>（鸡蛋榜 <code class="k">eggs</code>、套餐榜 <code class="k">plans</code>、模型榜 <code class="k">models</code>），保存刷新即可；改完记得更新 <code class="k">updatedAt</code>。倒计时、临期预警、过期置灰由浏览器根据 <code class="k">end</code> 日期自动计算。</p>
+      <p>本页为纯静态站点。日常更新只需改 <code class="k">data.js</code>（鸡蛋榜 <code class="k">eggs</code>、免费榜 <code class="k">free</code>、套餐榜 <code class="k">plans</code>、模型榜 <code class="k">models</code>），保存刷新即可；改完记得更新 <code class="k">updatedAt</code>。倒计时、临期预警、过期置灰由浏览器根据 <code class="k">end</code> 日期自动计算。</p>
       <p>更省事的方式：运行 <code class="k">node scripts/update-data.mjs --apply</code>，脚本会巡检各厂商公告页、检查现有链接是否失效、把高置信度的新活动自动写回 <code class="k">data.js</code>（带「自动收录」标记待复核），并在 <code class="k">reports/</code> 生成当日巡检报告。部署到 GitHub 后，仓库自带的 Actions 会每天定时跑一遍并自动发布。</p>
     </div>
     <div>
@@ -519,6 +592,8 @@
   const fmtDate = s => { const [y,m,d] = s.split('-'); return `${m}.${d}`; };
   const daysLeft = e => e ? Math.ceil((new Date(e + 'T00:00:00') - TODAY) / DAY) : Infinity;
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const addrDisplay = u => { const s = String(u).replace(/^https?:\/\//, '').replace(/\/$/, ''); return s.length > 34 ? s.slice(0, 32) + '…' : s; };
+  const linkHTML = u => `<a class="addr" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(u)}">${esc(addrDisplay(u))}</a>`;
 
   const TYPE = {
     signup:  {label:'注册礼',   cls:'signup'},
@@ -535,20 +610,27 @@
     clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
     ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M9 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/></svg>',
     egg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5C8.7 2.5 5.8 8 5.8 13.2a6.2 6.2 0 0 0 12.4 0C18.2 8 15.3 2.5 12 2.5Z"/></svg>',
-    cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'
+    cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    gift:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8M12 8v13M12 8a3 3 0 1 0-3-3c0 2.2 3 3 3 3Zm0 0a3 3 0 1 1 3-3c0 2.2-3 3-3 3Z"/></svg>'
   };
 
   /* ---------- header stats ---------- */
   const eggsAll = DATA.eggs;
   const left = e => daysLeft(e.end) >= 0;
   const active = eggsAll.filter(left).length;
-  const soon = eggsAll.filter(e => { const d = daysLeft(e.end); return d >= 0 && d <= 3; }).length;
+  const promos = (DATA.free || []).filter(f => f.end);
+  const eggsSoon = eggsAll.filter(e => { const d = daysLeft(e.end); return d >= 0 && d <= 3; });
+  const promoSoon = promos.filter(f => { const d = daysLeft(f.end); return d >= 0 && d <= 3; });
+  const soon = eggsSoon.length + promoSoon.length;
   const foreverCnt = eggsAll.filter(e => e.forever).length;
+  const freeCnt = (DATA.free || []).length;
   $('#statsRow').innerHTML = `
     <span class="chip egg">${svg.egg} 活动进行中 <span class="num">${active}</span> 个</span>
+    <span class="chip">${svg.gift} 免费版 <span class="num">${freeCnt}</span> 款</span>
     <span class="chip ok">${svg.clock} 长期羊毛 <span class="num">${foreverCnt}</span> 个</span>
     ${soon ? `<span class="chip hot">${svg.cal} <span class="num">${soon}</span> 个 3 天内截止</span>` : ''}
-    <span class="chip">共收录 ${eggsAll.length} 条福利情报</span>`;
+    <span class="chip">共收录 ${eggsAll.length} 条活动情报</span>`;
+  $('#navFreeCnt').textContent = freeCnt;
   $('#navUpdated').textContent = DATA.updatedAt + (DATA.checkedAt ? ` · 巡检 ${DATA.checkedAt}` : '');
   $('#footUpdated').textContent = DATA.updatedAt;
   $('#navEggCnt').textContent = eggsAll.length;
@@ -556,12 +638,11 @@
   $('#navModelCnt').textContent = DATA.models.length;
 
   /* ---------- 临期预警 ---------- */
-  $('#alertStrip').innerHTML = eggsAll
-    .filter(e => { const d = daysLeft(e.end); return d >= 0 && d <= 3; })
-    .map(e => {
-      const d = daysLeft(e.end);
-      const t = d === 0 ? '今天截止' : d === 1 ? '明天截止' : `剩 ${d} 天`;
-      return `<a class="alert-item" href="#eggs">${svg.clock} ${esc(e.vendor)}「${esc(e.title)}」<span class="d">${t}</span></a>`;
+  $('#alertStrip').innerHTML = eggsSoon.map(e => ({ v: e.vendor, t: e.title, d: daysLeft(e.end), href: '#eggs' }))
+    .concat(promoSoon.map(f => ({ v: f.vendor, t: f.name, d: daysLeft(f.end), href: '#free' })))
+    .map(x => {
+      const t = x.d === 0 ? '今天截止' : x.d === 1 ? '明天截止' : `剩 ${x.d} 天`;
+      return `<a class="alert-item" href="${x.href}">${svg.clock} ${esc(x.v)}「${esc(x.t)}」<span class="d">${t}</span></a>`;
     }).join('');
 
   /* ---------- 鸡蛋榜 ---------- */
@@ -617,6 +698,7 @@
         </div>
         <div class="egg-go">
           <a class="go" href="${esc(e.url)}" target="_blank" rel="noopener">去领取 ${svg.ext}</a>
+          ${linkHTML(e.url)}
         </div>
       </div>`;
     }).join('') : `<div class="empty">没有符合条件的福利，换个筛选项试试</div>`;
@@ -631,6 +713,61 @@
     renderEggs();
   });
   $('#hideExpired').addEventListener('change', ev => { hideExpired = ev.target.checked; renderEggs(); });
+
+  /* ---------- 免费榜 ---------- */
+  const FREE_CAT = { api: 'API 免费层', web: '网页版', code: '编程工具', promo: '活动免费' };
+  let freeCat = 'all', freeRegion = 'all', freeNoCard = true;
+  function ftermHTML(f){
+    if (f.forever || (!f.end && !f.term)) return '<span class="dday long">长期有效</span>';
+    if (!f.end) return `<span class="dday safe">${esc(f.term)}</span>`;
+    const d = daysLeft(f.end);
+    const cls = d < 0 ? 'over' : d <= 3 ? 'danger' : d <= 7 ? 'warn' : 'safe';
+    const txt = d < 0 ? '已过期' : d === 0 ? '今天截止' : `剩 ${d} 天`;
+    return `<span class="dday ${cls}">${svg.clock} ${txt}</span>`;
+  }
+  function renderFree(){
+    const list = (DATA.free || [])
+      .filter(f => freeCat === 'all' || f.cat === freeCat)
+      .filter(f => freeRegion === 'all' || f.region === freeRegion)
+      .filter(f => !freeNoCard || f.card !== true);
+    const cardHTML = f => f.card === true
+      ? '<span class="card-yes">需要</span>'
+      : f.card === 'alt' ? `<span class="card-alt">${esc(f.cardNote || '有条件')}</span>`
+      : '<span class="card-no">不需要</span>';
+    $('#freeBody').innerHTML = list.length ? list.map(f => {
+      const expired = f.end && daysLeft(f.end) < 0;
+      return `
+      <tr class="${expired ? 'promo-expired' : ''}">
+        <td>
+          <div class="model-name">${esc(f.name)}</div>
+          <div class="plan-sub">${esc(f.vendor)}${f.region === 'intl' ? ' · 国际' : ''}</div>
+        </td>
+        <td><span class="pill ${esc(f.cat)}">${FREE_CAT[f.cat] || esc(f.cat)}</span></td>
+        <td class="deadline">
+          <div class="d1">${f.end ? esc(f.end) + ' 截止' : esc(f.term || '长期')}</div>
+          ${ftermHTML(f)}
+        </td>
+        <td><b style="font-size:13.5px">${esc(f.desc)}</b></td>
+        <td class="cell-muted">${esc(f.limits)}</td>
+        <td>${cardHTML(f)}</td>
+        <td class="cell-muted">${esc(f.comment)}</td>
+        <td>${linkHTML(f.url)}</td>
+      </tr>`;
+    }).join('') : `<div class="empty">没有符合条件的免费版，放宽筛选项试试</div>`;
+  }
+  $('#freeCatFilters').addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b) return;
+    freeCat = b.dataset.c;
+    $('#freeCatFilters').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    renderFree();
+  });
+  $('#freeRegionFilters').addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b) return;
+    freeRegion = b.dataset.r;
+    $('#freeRegionFilters').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    renderFree();
+  });
+  $('#onlyNoCard').addEventListener('change', ev => { freeNoCard = ev.target.checked; renderFree(); });
 
   /* ---------- 套餐榜 ---------- */
   let planRegion = 'all';
@@ -651,7 +788,7 @@
         <td class="cell-muted"><b style="color:var(--text)">${esc(p.model)}</b><br>${esc(p.quota)}</td>
         <td class="cell-muted">${esc(p.tools)}</td>
         <td>${tagHTML(p.tag)}</td>
-        <td><a class="go" href="${esc(p.url)}" target="_blank" rel="noopener">官网 ${svg.ext}</a></td>
+        <td><div class="site-cell"><a class="go" href="${esc(p.url)}" target="_blank" rel="noopener">官网 ${svg.ext}</a>${linkHTML(p.url)}</div></td>
       </tr>`).join('');
   }
   $('#planFilters').addEventListener('click', ev => {
@@ -681,7 +818,8 @@
         <td class="mono">¥${m.pin}<small style="color:var(--dim)"> /M</small></td>
         <td class="mono" style="font-weight:700">¥${m.pout}<small style="color:var(--dim)"> /M</small></td>
         <td class="${/免费|体验金|代金券/.test(m.free) ? 'free-yes' : 'free-no'}">${esc(m.free)}</td>
-        <td class="cell-muted">${esc(m.comment)} <a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--dim);text-decoration:none;white-space:nowrap">↗</a></td>
+        <td class="cell-muted">${esc(m.comment)}</td>
+        <td>${linkHTML(m.url)}</td>
       </tr>`).join('');
   }
   document.querySelectorAll('#models th.sortable').forEach(th => {
@@ -701,6 +839,7 @@
   $('#onlyFree').addEventListener('change', ev => { onlyFree = ev.target.checked; renderModels(); });
 
   renderEggs();
+  renderFree();
   renderPlans();
   renderModels();
 })();

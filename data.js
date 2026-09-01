@@ -181,6 +181,31 @@ window.DATA = {
       "url": "https://console.groq.com"
     }
   ],
+  "free": [
+    { "name": "GLM-Flash 系列", "vendor": "智谱 AI", "cat": "api", "region": "cn", "desc": "GLM-4.7-Flash / 4-Flash 永久免费 API", "limits": "并发数限制，高峰期限速，无 SLA", "card": false, "cardNote": "", "comment": "国内最良心的免费模型，编程 / Agent 兜底首选", "url": "https://open.bigmodel.cn", "end": null, "forever": true },
+    { "name": "hunyuan-lite", "vendor": "腾讯云混元", "cat": "api", "region": "cn", "desc": "lite 版模型永久免费", "limits": "RPM 并发配额，重任务需换更大杯", "card": false, "cardNote": "", "comment": "免费档里能打的长文本备胎", "url": "https://cloud.tencent.com/product/hunyuan", "end": null, "forever": true },
+    { "name": "ERNIE Speed / Lite", "vendor": "百度千帆", "cat": "api", "region": "cn", "desc": "官方宣布永久免费的小杯模型", "limits": "RPM 配额限制，能力弱于旗舰", "card": false, "cardNote": "", "comment": "中文轻任务够用，新客另有体验金", "url": "https://cloud.baidu.com/product/qianfan", "end": null, "forever": true },
+    { "name": "Spark Lite", "vendor": "讯飞星火", "cat": "api", "region": "cn", "desc": "Lite 版永久免费", "limits": "并发数较低，适合轻量调用", "card": false, "cardNote": "", "comment": "免费档里响应速度不错", "url": "https://www.xfyun.cn", "end": null, "forever": true },
+    { "name": "免费模型池", "vendor": "硅基流动", "cat": "api", "region": "cn", "desc": "平台内多款小尺寸开源模型免费", "limits": "仅指定小模型，限 RPM / 每日额度", "card": false, "cardNote": "", "comment": "配合注册送的 2000 万 token，白嫖起步站", "url": "https://siliconflow.cn", "end": null, "forever": true },
+    { "name": "Gemini 2.5 Flash 免费层", "vendor": "Google", "cat": "api", "region": "intl", "desc": "AI Studio 免费 RPM / 每日配额", "limits": "每分钟 / 每日请求数限额，免费层数据可能用于训练", "card": false, "cardNote": "", "comment": "国际免费层天花板，百万级上下文", "url": "https://aistudio.google.com", "end": null, "forever": true },
+    { "name": "OpenRouter :free 模型", "vendor": "OpenRouter", "cat": "api", "region": "intl", "desc": "带 :free 后缀的模型每日免费请求", "limits": "未充值 50 次 / 日，充值 $10 后升 1000 次 / 日", "card": false, "cardNote": "", "comment": "一个 key 白嫖多家的免费版本", "url": "https://openrouter.ai", "end": null, "forever": true },
+    { "name": "Groq 免费层", "vendor": "Groq", "cat": "api", "region": "intl", "desc": "主流开源模型免费限额调用", "limits": "RPM / RPD 限额，仅平台托管模型", "card": false, "cardNote": "", "comment": "LPU 推理速度极快，大批量轻任务神器", "url": "https://console.groq.com", "end": null, "forever": true },
+    { "name": "Cerebras 免费层", "vendor": "Cerebras", "cat": "api", "region": "intl", "desc": "每日免费 token 配额", "limits": "每日 tokens 上限，仅托管的开源模型", "card": false, "cardNote": "", "comment": "推理速度竞速赛冠军常客", "url": "https://cloud.cerebras.ai", "end": null, "forever": true },
+    { "name": "GitHub Models", "vendor": "GitHub", "cat": "api", "region": "intl", "desc": "免费试用 GPT / Claude / Llama 等各家模型", "limits": "按账号等级限速，不可用于生产", "card": "alt", "cardNote": "要 GitHub 账号", "comment": "一个 GitHub 账号试遍各家旗舰", "url": "https://github.com/marketplace/models", "end": null, "forever": true },
+    { "name": "DeepSeek 对话版", "vendor": "深度求索", "cat": "web", "region": "cn", "desc": "网页 / App 基本无限量免费", "limits": "高峰期限流，功能比 API 版少", "card": false, "cardNote": "", "comment": "全场最像「真免费」的旗舰对话", "url": "https://chat.deepseek.com", "end": null, "forever": true },
+    { "name": "Kimi", "vendor": "月之暗面", "cat": "web", "region": "cn", "desc": "网页 / App 免费使用", "limits": "高峰期限速，超长上下文有档位", "card": false, "cardNote": "", "comment": "长文档阅读免费首选", "url": "https://www.kimi.com", "end": null, "forever": true },
+    { "name": "豆包", "vendor": "字节跳动", "cat": "web", "region": "cn", "desc": "App / 网页免费使用", "limits": "部分高级功能收费或限次", "card": false, "cardNote": "", "comment": "日常问答 / 语音全家桶免费给得大方", "url": "https://www.doubao.com", "end": null, "forever": true },
+    { "name": "ChatGPT Free", "vendor": "OpenAI", "cat": "web", "region": "intl", "desc": "免费档可用旗舰模型", "limits": "消息数动态限额，超限降级小杯", "card": false, "cardNote": "", "comment": "国际对话基线，白嫖额度时紧时松", "url": "https://chatg.com", "end": null, "forever": true },
+    { "name": "GitHub Copilot Free", "vendor": "GitHub", "cat": "code", "region": "intl", "desc": "每月 2000 次补全 + 50 次对话请求", "limits": "月额度用完等刷新，模型选择受限", "card": false, "cardNote": "", "comment": "白嫖 AI 编程补全的起点", "url": "https://github.com/features/copilot", "end": null, "forever": true },
+    { "name": "通义灵码 标准版", "vendor": "阿里", "cat": "code", "region": "cn", "desc": "代码补全免费不限量", "limits": "高级模型 / 企业功能要专业版", "card": false, "cardNote": "", "comment": "国内 IDE 补全免费天花板", "url": "https://tongyi.aliyun.com/lingma", "end": null, "forever": true },
+    { "name": "Cursor Hobby", "vendor": "Cursor", "cat": "code", "region": "intl", "desc": "有限补全与慢速请求额度", "limits": "月度额度小，高峰期排队", "card": false, "cardNote": "", "comment": "体验 AI IDE 的入门票", "url": "https://cursor.com", "end": null, "forever": true },
+    { "name": "GLM-4.6 全量限时免费", "vendor": "智谱 AI", "cat": "promo", "region": "cn", "desc": "新模型上线限量期，API 全量免费开放", "limits": "每日限量请求，超量后恢复原价", "card": false, "cardNote": "", "comment": "新模型发布期的标准羊毛，手快有", "url": "https://open.bigmodel.cn", "end": "2026-09-03" },
+    { "name": "Kimi K3 公测免费", "vendor": "月之暗面", "cat": "promo", "region": "cn", "desc": "K3 新模型 API 公测期免费调用", "limits": "公测期限速，并发 / 上下文受限", "card": false, "cardNote": "", "comment": "公测期白嫖旗舰，顺手测编程能力", "url": "https://platform.moonshot.cn", "end": "2026-09-20" },
+    { "name": "Doubao-1.6 体验期免费", "vendor": "火山方舟", "cat": "promo", "region": "cn", "desc": "新模型体验期免费额度，安心体验模式 0 计费", "limits": "每模型 50 万 tokens 体验额度", "card": false, "cardNote": "", "comment": "配合每日 200 万签到，白嫖主力", "url": "https://www.volcengine.com/product/ark", "end": "2026-09-30" },
+    { "name": "GLM Coding 新客首月 ¥1", "vendor": "智谱 AI", "cat": "promo", "region": "cn", "desc": "编程套餐首月 1 元体验", "limits": "仅新客首月，次月恢复原价可随时取消", "card": false, "cardNote": "", "comment": "1 块钱用满 GLM-4.7 编程额度", "url": "https://www.bigmodel.cn", "end": "2026-09-30" },
+    { "name": "Trae IDE 旗舰模型免费", "vendor": "字节跳动", "cat": "promo", "region": "cn", "desc": "IDE 内活动期免费用旗舰模型", "limits": "活动期额度动态调整，可能有次数上限", "card": false, "cardNote": "", "comment": "活动期内的编程白嫖大额窗口", "url": "https://www.trae.ai", "end": "2026-10-31" },
+    { "name": "Cursor Pro 试用", "vendor": "Cursor", "cat": "promo", "region": "intl", "desc": "Pro 完整功能两周免费试用", "limits": "注册起 14 天，到期自动扣费需手动取消", "card": "alt", "cardNote": "试用要绑卡，记得取消", "comment": "敢绑卡可白嫖两周完整 Pro", "url": "https://cursor.com", "end": null, "term": "注册起 14 天" }
+  ],
   "plans": [
     {
       "vendor": "DeepSeek",

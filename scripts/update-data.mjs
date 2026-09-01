@@ -193,6 +193,76 @@ window.DATA = ${JSON.stringify(data, null, 2)};
   writeFileSync(DATA_FILE, header, 'utf8');
 }
 
+/* ================= 价格对表与时效清理 ================= */
+const FX_RATE = 7.2;        // USD → CNY 估算汇率
+const PRICE_TOL = 0.15;     // 偏差超过 15% 视为价格失真
+const INTL_MODEL_IDS = {
+  'GPT-5': 'openai/gpt-5',
+  'Gemini-2.5-Flash': 'google/gemini-2.5-flash'
+};
+const round1 = n => Math.round(n * 10) / 10;
+
+async function checkIntlPrices(data, log, apply) {
+  log.push('**国际模型价格对表**（OpenRouter 公开 API，按 1 USD ≈ ¥7.2 折算，偏差 >15% 判定失真）：');
+  let byId;
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/models', { headers: { 'user-agent': UA }, signal: AbortSignal.timeout(TIMEOUT) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    byId = new Map((await res.json()).data.map(m => [m.id, m]));
+  } catch (err) {
+    log.push(`  - 对表失败：${err.message}（隔日重试）`);
+    return;
+  }
+  for (const [name, id] of Object.entries(INTL_MODEL_IDS)) {
+    const m = byId.get(id);
+    const ours = (data.models || []).find(x => x.name === name);
+    if (!m || !m.pricing || !ours) { log.push(`  - ${name}：未在 OpenRouter 找到 ${id}，跳过`); continue; }
+    const pin = parseFloat(m.pricing.prompt) * 1e6 * FX_RATE;
+    const pout = parseFloat(m.pricing.completion) * 1e6 * FX_RATE;
+    if (!isFinite(pin) || !isFinite(pout)) continue;
+    const drift = Math.max(Math.abs(pin - ours.pin) / ours.pin, Math.abs(pout - ours.pout) / ours.pout);
+    if (drift <= PRICE_TOL) { log.push(`  - ${name}：一致（维持 ¥${ours.pin}/¥${ours.pout}）`); continue; }
+    if (apply) {
+      ours.pin = round1(pin); ours.pout = round1(pout); ours.priceCheckedAt = today();
+      log.push(`  - ${name}：偏差 ${(drift * 100).toFixed(0)}%，已自动更新为 ¥${ours.pin}/¥${ours.pout}（结构化数据源，建议顺手复核）`);
+    } else {
+      log.push(`  - ${name}：偏差 ${(drift * 100).toFixed(0)}%（现值 ¥${ours.pin}/¥${ours.pout} → 新值 ¥${round1(pin)}/¥${round1(pout)}），--apply 可自动更新`);
+    }
+  }
+}
+
+async function verifyDeepSeekPrice(data, log) {
+  log.push('**DeepSeek 官方定价页核验**（仅提示，不自动改）：');
+  try {
+    const { status, text } = await fetchText('https://api-docs.deepseek.com/zh-cn/quick_start/pricing');
+    if (status >= 400) throw new Error('HTTP ' + status);
+    const plain = stripHtml(text);
+    const ours = (data.models || []).find(x => x.name.startsWith('DeepSeek-V3.2'));
+    if (!ours) return;
+    const ok = [ours.pin, ours.pout].every(v => plain.includes(String(v)) || plain.includes(v.toFixed(1)));
+    log.push(ok
+      ? `  - DeepSeek-V3.2：定价页能对到 ¥${ours.pin}/¥${ours.pout}，未见明显变化`
+      : `  - ⚠ 页面上没对到 ¥${ours.pin}/¥${ours.pout}，官方定价可能已调整，请人工核对 api-docs.deepseek.com/zh-cn/quick_start/pricing`);
+  } catch (err) {
+    log.push(`  - 核验失败：${err.message}（隔日重试）`);
+  }
+}
+
+function pruneExpired(data, log, apply) {
+  const cutoff = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+  const stale = list => list.filter(x => x.end && !x.forever && x.end < cutoff);
+  const removedEggs = stale(data.eggs);
+  const removedFree = Array.isArray(data.free) ? stale(data.free) : [];
+  if (apply) {
+    data.eggs = data.eggs.filter(x => !(x.end && !x.forever && x.end < cutoff));
+    if (Array.isArray(data.free)) data.free = data.free.filter(x => !(x.end && !x.forever && x.end < cutoff));
+  }
+  log.push(`**过期清理**（截止日早于 ${cutoff} 的条目${apply ? '已自动移除' : '待移除，--apply 生效'}）：`);
+  removedEggs.forEach(e => log.push(`  - 鸡蛋榜：${e.vendor}「${e.title}」（${e.end} 已过期）`));
+  removedFree.forEach(f => log.push(`  - 免费榜：${f.vendor}「${f.name}」（${f.end} 已过期）`));
+  if (!removedEggs.length && !removedFree.length) log.push('  - 本轮无超期条目');
+}
+
 /* ================= 主流程 ================= */
 async function scanSource(src) {
   const { status, text, finalUrl } = await fetchText(src.url);
@@ -255,15 +325,23 @@ async function main() {
                                    (c.amounts.length > 0 && /免费|折扣|折|赠送|送/.test(c.title)));
   const weak = fresh.filter(c => !strong.includes(c));
 
-  /* 3. 现有条目链接健康检查 */
-  console.log(`\n  检查现有 ${data.eggs.length} 条福利链接 ... `);
+  /* 3. 现有条目链接健康检查（鸡蛋榜 + 免费榜） */
+  const linkTargets = data.eggs.concat(Array.isArray(data.free) ? data.free : []);
+  console.log(`\n  检查现有 ${linkTargets.length} 条福利链接 ... `);
   const dead = [], blocked = [];
-  for (const e of data.eggs) {
+  for (const e of linkTargets) {
     const state = await checkLink(e.url);
     if (state === 'dead') dead.push(e);
     else if (state === 'blocked') blocked.push(e);
   }
-  console.log(`  正常 ${data.eggs.length - dead.length - blocked.length} · 失效 ${dead.length} · 无法验证 ${blocked.length}`);
+  console.log(`  正常 ${linkTargets.length - dead.length - blocked.length} · 失效 ${dead.length} · 无法验证 ${blocked.length}`);
+
+  /* 3.5 价格对表与时效清理 */
+  const priceLog = [], pruneLog = [];
+  await checkIntlPrices(data, priceLog, APPLY);
+  await verifyDeepSeekPrice(data, priceLog);
+  pruneExpired(data, pruneLog, APPLY);
+  console.log('  价格对表与过期清理完成，详情见报告');
 
   /* 4. 生成巡检报告 */
   mkdirSync(REPORT_DIR, { recursive: true });
@@ -273,7 +351,7 @@ async function main() {
   rep.push(`- 模式：${APPLY ? '自动收录（--apply）' : '只巡检（加 --apply 可自动写回 data.js）'}`);
   rep.push(`- 数据源：${listSources.length - errors.length}/${listSources.length} 个扫描成功`);
   rep.push(`- 新发现候选：${fresh.length} 条（高置信度 ${strong.length} 条）`);
-  rep.push(`- 现有条目链接：失效 ${dead.length} 条，无法验证 ${blocked.length} 条`);
+  rep.push(`- 现有条目（鸡蛋榜+免费榜）链接：失效 ${dead.length} 条，无法验证 ${blocked.length} 条`);
   if (data.checkedAt) rep.push(`- 上次巡检：${data.checkedAt}`);
   rep.push('');
 
@@ -298,9 +376,17 @@ async function main() {
   if (dead.length || blocked.length) {
     rep.push('## 现有条目健康检查');
     rep.push('');
-    if (dead.length) { rep.push('**已失效（建议从鸡蛋榜移除或更新链接）：**'); dead.forEach(e => rep.push(`- [ ] ${e.vendor}「${e.title}」 ${e.url}`)); rep.push(''); }
-    if (blocked.length) { rep.push('**无法验证（反爬/超时，多为正常，隔日复查）：**'); blocked.forEach(e => rep.push(`- ${e.vendor}「${e.title}」 ${e.url}`)); rep.push(''); }
+    if (dead.length) { rep.push('**已失效（建议移除或更新链接）：**'); dead.forEach(e => rep.push(`- [ ] ${e.vendor}「${e.title || e.name}」 ${e.url}`)); rep.push(''); }
+    if (blocked.length) { rep.push('**无法验证（反爬/超时，多为正常，隔日复查）：**'); blocked.forEach(e => rep.push(`- ${e.vendor}「${e.title || e.name}」 ${e.url}`)); rep.push(''); }
   }
+
+  rep.push('## 价格与时效自动化');
+  rep.push('');
+  priceLog.forEach(l => rep.push(l));
+  pruneLog.forEach(l => rep.push(l));
+  rep.push('');
+  rep.push('> 套餐榜与国产模型价格暂无可靠公开数据源，为保证准确性不自动改动，统一列在下方人工清单里核对。');
+  rep.push('');
 
   rep.push('## 人工巡检清单（控制台类，脚本够不到，点开看一眼）');
   rep.push('');
