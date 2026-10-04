@@ -82,18 +82,6 @@ window.DATA = {
       "url": "https://www.volcengine.com/product/ark"
     },
     {
-      "vendor": "DeepSeek",
-      "color": "#4d6bfe",
-      "title": "V3.2 上线限时 5 折",
-      "desc": "新版本 API 限时半价，输入 ¥1 / 输出 ¥1.5 每百万 tokens",
-      "amount": "5 折",
-      "unit": "API 折扣",
-      "type": "limited",
-      "value": 600,
-      "end": "2026-09-03",
-      "url": "https://platform.deepseek.com"
-    },
-    {
       "vendor": "腾讯云混元",
       "color": "#0052d9",
       "title": "新客体验金",
@@ -419,19 +407,6 @@ window.DATA = {
       "url": "https://cursor.com",
       "end": null,
       "forever": true
-    },
-    {
-      "name": "GLM-4.6 全量限时免费",
-      "vendor": "智谱 AI",
-      "cat": "promo",
-      "region": "cn",
-      "desc": "新模型上线限量期，API 全量免费开放",
-      "limits": "每日限量请求，超量后恢复原价",
-      "card": false,
-      "cardNote": "",
-      "comment": "新模型发布期的标准羊毛，手快有",
-      "url": "https://open.bigmodel.cn",
-      "end": "2026-09-03"
     },
     {
       "name": "Kimi K3 公测免费",
@@ -785,5 +760,5 @@ window.DATA = {
       "url": "https://openai.com"
     }
   ],
-  "checkedAt": "2026-10-03"
+  "checkedAt": "2026-10-04"
 };
