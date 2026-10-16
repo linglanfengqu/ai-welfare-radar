@@ -106,18 +106,6 @@ window.DATA = {
       "url": "https://cloud.baidu.com/product/qianfan"
     },
     {
-      "vendor": "Moonshot Kimi",
-      "color": "#000000",
-      "title": "开放平台新客券",
-      "desc": "注册送 15 元体验金，K2 系列模型 API 通用，可抵扣按量费用",
-      "amount": "¥15",
-      "unit": "代金券",
-      "type": "signup",
-      "value": 400,
-      "end": "2026-09-15",
-      "url": "https://platform.moonshot.cn"
-    },
-    {
       "vendor": "MiniMax",
       "color": "#f23f5d",
       "title": "新客代金券包",
@@ -760,5 +748,5 @@ window.DATA = {
       "url": "https://openai.com"
     }
   ],
-  "checkedAt": "2026-10-15"
+  "checkedAt": "2026-10-16"
 };
