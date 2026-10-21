@@ -397,19 +397,6 @@ window.DATA = {
       "forever": true
     },
     {
-      "name": "Kimi K3 公测免费",
-      "vendor": "月之暗面",
-      "cat": "promo",
-      "region": "cn",
-      "desc": "K3 新模型 API 公测期免费调用",
-      "limits": "公测期限速，并发 / 上下文受限",
-      "card": false,
-      "cardNote": "",
-      "comment": "公测期白嫖旗舰，顺手测编程能力",
-      "url": "https://platform.moonshot.cn",
-      "end": "2026-09-20"
-    },
-    {
       "name": "Doubao-1.6 体验期免费",
       "vendor": "火山方舟",
       "cat": "promo",
@@ -748,5 +735,5 @@ window.DATA = {
       "url": "https://openai.com"
     }
   ],
-  "checkedAt": "2026-10-20"
+  "checkedAt": "2026-10-21"
 };
