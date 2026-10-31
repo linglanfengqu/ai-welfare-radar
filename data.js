@@ -106,18 +106,6 @@ window.DATA = {
       "url": "https://cloud.baidu.com/product/qianfan"
     },
     {
-      "vendor": "MiniMax",
-      "color": "#f23f5d",
-      "title": "新客代金券包",
-      "desc": "注册送 15 元代金券，M2 系列 API 通用，另有免费体验模型",
-      "amount": "¥15",
-      "unit": "代金券",
-      "type": "signup",
-      "value": 400,
-      "end": "2026-09-30",
-      "url": "https://www.minimaxi.com"
-    },
-    {
       "vendor": "Google Gemini",
       "color": "#1a73e8",
       "title": "API 免费层",
@@ -395,32 +383,6 @@ window.DATA = {
       "url": "https://cursor.com",
       "end": null,
       "forever": true
-    },
-    {
-      "name": "Doubao-1.6 体验期免费",
-      "vendor": "火山方舟",
-      "cat": "promo",
-      "region": "cn",
-      "desc": "新模型体验期免费额度，安心体验模式 0 计费",
-      "limits": "每模型 50 万 tokens 体验额度",
-      "card": false,
-      "cardNote": "",
-      "comment": "配合每日 200 万签到，白嫖主力",
-      "url": "https://www.volcengine.com/product/ark",
-      "end": "2026-09-30"
-    },
-    {
-      "name": "GLM Coding 新客首月 ¥1",
-      "vendor": "智谱 AI",
-      "cat": "promo",
-      "region": "cn",
-      "desc": "编程套餐首月 1 元体验",
-      "limits": "仅新客首月，次月恢复原价可随时取消",
-      "card": false,
-      "cardNote": "",
-      "comment": "1 块钱用满 GLM-4.7 编程额度",
-      "url": "https://www.bigmodel.cn",
-      "end": "2026-09-30"
     },
     {
       "name": "Trae IDE 旗舰模型免费",
@@ -735,5 +697,5 @@ window.DATA = {
       "url": "https://openai.com"
     }
   ],
-  "checkedAt": "2026-10-30"
+  "checkedAt": "2026-10-31"
 };
