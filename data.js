@@ -697,5 +697,5 @@ window.DATA = {
       "url": "https://openai.com"
     }
   ],
-  "checkedAt": "2026-11-16"
+  "checkedAt": "2026-11-17"
 };
